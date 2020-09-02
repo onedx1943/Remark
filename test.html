@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Echarts Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.13.2/lib/theme-chalk/index.css">
+    <style>
+        #app {
+            padding: 30px;
+        }
+        .demo-chart-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .demo-chart {
+            width: 1200px;
+            height: 300px;
+        }
+        .time-chart {
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <el-tabs tab-position="left">
+            <el-tab-pane label="图表连接">
+                <el-collapse value="1" accordion>
+                    <el-collapse-item title="多组数据图表" name="1">
+                        <div class="demo-chart-container">
+                            <div id="connect-multi-chart" class="demo-chart"></div>
+                            <div style="visibility: hidden"><el-input v-model="multiGroupName" placeholder="请输入group name"></el-input></div>
+                        </div>
+                    </el-collapse-item>
+                    <el-collapse-item title="单个图表" name="2">
+                        <div class="demo-chart-container">
+                            <div id="connect-time-chart" class="demo-chart time-chart"></div>
+                            <div><el-input v-model="timeGroupName" placeholder="请输入group name"></el-input></div>
+                        </div>
+                        <div class="demo-chart-container">
+                            <div id="connect-chart1" class="demo-chart"></div>
+                            <div><el-input v-model="chart1GroupName" placeholder="请输入group name"></el-input></div>
+                        </div>
+                        <div class="demo-chart-container">
+                            <div id="connect-chart2" class="demo-chart"></div>
+                            <div><el-input v-model="chart2GroupName" placeholder="请输入group name"></el-input></div>
+                        </div>
+                        <div class="demo-chart-container">
+                            <div id="connect-chart3" class="demo-chart"></div>
+                            <div><el-input v-model="chart3GroupName" placeholder="请输入group name"></el-input></div>
+                        </div>
+                    </el-collapse-item>
+                </el-collapse>
+            </el-tab-pane>
+            <el-tab-pane label="markLine">
+                <div class="demo-chart-container">
+                    <div id="markLine-chart" class="demo-chart"></div>
+                    <div>
+                        <div v-for="(markLine, index) in markLineData"
+                            :index="index"
+                            :key="markLine.xAxis">
+                            name: {{ markLine.name }}, xAxis: {{ markLine.xAxis }}
+                        </div>
+                    </div>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="自定义图表">
+                <div>
+                    <a href="https://echarts.apache.org/examples/zh/editor.html?c=custom-profile" target="_blank">
+                        https://echarts.apache.org/examples/zh/editor.html?c=custom-profile
+                    </a>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="区域框选">
+                <div class="demo-chart-container">
+                    <div id="brush-chart1" class="demo-chart"></div>
+                </div>
+                <div class="demo-chart-container">
+                    <div id="brush-chart2" class="demo-chart"></div>
+                </div>
+                <div class="demo-chart-container">
+                    <div id="brush-chart3" class="demo-chart"></div>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/element-ui@2.13.2/lib/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script>
+ChartDemo = new Vue({
+    el: '#app',
+    data: function () {
+        return {
+            dataLength: 500,
+            connectMultiChart: null,
+            connectTimeChart: null,
+            connectChart1: null,
+            connectChart2: null,
+            connectChart3: null,
+            multiGroupName: '',
+            timeGroupName: 'group',
+            chart1GroupName: 'group',
+            chart2GroupName: 'group',
+            chart3GroupName: 'group',
+            markLineChart: null,
+            markLineData: [],
+            brushChart1: null,
+            brushChart2: null,
+            brushChart3: null,
+        }
+    },
+    watch: {
+        multiGroupName: function (val) {
+            if (val) {
+                this.connectMultiChart.group = val;
+                echarts.connect(val);
+            }
+        },
+        timeGroupName: function (val) {
+            if (val) {
+                this.connectTimeChart.group = val;
+                echarts.connect(val);
+            }
+        },
+        chart1GroupName: function (val) {
+            if (val) {
+                this.connectChart1.group = val;
+                echarts.connect(val);
+            }
+        },
+        chart2GroupName: function (val) {
+            if (val) {
+                this.connectChart2.group = val;
+                echarts.connect(val);
+            }
+        },
+        chart3GroupName: function (val) {
+            if (val) {
+                this.connectChart3.group = val;
+                echarts.connect(val);
+            }
+        },
+    },
+    mounted: function () {
+        // 图表连接
+        this.connectMultiChart = echarts.init(document.getElementById('connect-multi-chart'));
+        this.connectTimeChart = echarts.init(document.getElementById('connect-time-chart'));
+        this.connectChart1 = echarts.init(document.getElementById('connect-chart1'));
+        this.connectChart2 = echarts.init(document.getElementById('connect-chart2'));
+        this.connectChart3 = echarts.init(document.getElementById('connect-chart3'));
+        this.loadMultiChart(this.connectMultiChart, 'Multi Chart Demo', this.dataLength);
+        this.loadTimeAxis(this.connectTimeChart, this.dataLength);
+        this.loadChart(this.connectChart1, 'series1', this.dataLength);
+        this.loadChart(this.connectChart2, 'series2', this.dataLength);
+        this.loadChart(this.connectChart3, 'series3', this.dataLength);
+        this.connectMultiChart.group = this.multiGroupName;
+        this.connectTimeChart.group = this.timeGroupName;
+        this.connectChart1.group = this.chart1GroupName;
+        this.connectChart2.group = this.chart2GroupName;
+        this.connectChart3.group = this.chart3GroupName;
+        echarts.connect(this.timeGroupName);
+        // markLine
+        this.markLineChart = echarts.init(document.getElementById('markLine-chart'));
+        this.loadChart(this.markLineChart, 'MarkLine Chart Demo', this.dataLength);
+        // 自定义图表
+
+        // 区域框选
+        this.brushChart1 = echarts.init(document.getElementById('brush-chart1'));
+        this.brushChart2 = echarts.init(document.getElementById('brush-chart2'));
+        this.brushChart3 = echarts.init(document.getElementById('brush-chart3'));
+        this.loadChart(this.brushChart1, 'series1', this.dataLength);
+        this.loadChart(this.brushChart2, 'series2', this.dataLength);
+        this.loadChart(this.brushChart3, 'series3', this.dataLength);
+        let brushGroup = 'brushGroup';
+        this.brushChart1.group = brushGroup;
+        this.brushChart2.group = brushGroup;
+        this.brushChart3.group = brushGroup;
+        echarts.connect(brushGroup);
+    },
+    methods: {
+        loadTimeAxis: function (chart, length) {
+            let option = {
+                dataZoom: {
+                    type: 'slider',
+                    filterMode: 'none',
+                    minValueSpan: 3
+                },
+                xAxis: {
+                    show: true,
+                    type: 'category',
+                    data: [...(new Array(length)).keys()]
+                },
+                yAxis: {
+                    show: false,
+                },
+                series: [{
+                    type: 'line'
+                }]
+            };
+            chart.setOption(option);
+        },
+        loadChart: function (chart, name, length) {
+            let option = {
+                title: {
+                    text: name,
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                },
+                dataZoom: {
+                    type: 'inside',
+                    filterMode: 'none',
+                    minValueSpan: 3
+                },
+                xAxis: {
+                    show: true,
+                    type: 'category',
+                    data: [...(new Array(length)).keys()]
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [{
+                    data: Array.from({length: length},(v, k) => Math.round(Math.random() * 500)),
+                    type: 'line',
+                    name: name
+                }]
+            };
+            chart.setOption(option);
+        },
+        loadMultiChart: function (chart, name, length) {
+            let option = {
+                title: {
+                    text: name,
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                },
+                dataZoom: {
+                    type: 'inside',
+                    filterMode: 'none',
+                    minValueSpan: 3
+                },
+                xAxis: {
+                    show: true,
+                    type: 'category',
+                    data: [...(new Array(length)).keys()]
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        data: Array.from({length: length},(v, k) => Math.round(Math.random() * 500)),
+                        type: 'line',
+                        name: 'series1'
+                    },
+                    {
+                        data: Array.from({length: length},(v, k) => Math.round(Math.random() * 500)),
+                        type: 'line',
+                        name: 'series2'
+                    },
+                    {
+                        data: Array.from({length: length},(v, k) => Math.round(Math.random() * 500)),
+                        type: 'line',
+                        name: 'series3'
+                    },
+                ]
+            };
+            chart.setOption(option);
+        },
+    }
+})
+    </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+Auto Close Tag
+
+Code Spell Checker
+
+Bracket Pair Colorizer
+
+Path Intellisense
+
+Debugger for Chrome
+
+Beautify
+
+Color Picker
